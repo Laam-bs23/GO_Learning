@@ -9,6 +9,8 @@ type ClassService interface {
 	CreateClass(class *models.Class) error
 	GetAllClasses() ([]models.Class, error)
 	GetClassByID(id uint) (*models.Class, error)
+	UpdateClass(class *models.Class) error
+	DeleteClass(id uint) error
 }
 
 type classService struct {
@@ -29,4 +31,12 @@ func (s *classService) GetAllClasses() ([]models.Class, error) {
 
 func (s *classService) GetClassByID(id uint) (*models.Class, error) {
 	return s.repo.GetByID(id)
+}
+
+func (s *classService) UpdateClass(class *models.Class) error {
+	return s.repo.Update(class)
+}
+
+func (s *classService) DeleteClass(id uint) error {
+	return s.repo.Delete(id)
 } 

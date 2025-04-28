@@ -87,4 +87,63 @@ func (h *ClassHandler) GetClassByID(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(class)
+}
+
+// @Summary Update a class
+// @Description Update an existing class with the provided details
+// @Tags classes
+// @Accept json
+// @Produce json
+// @Param id path int true "Class ID"
+// @Param class body models.Class true "Class object to update"
+// @Success 200 {object} models.Class
+// @Failure 400 {string} string "Invalid request body"
+// @Failure 500 {string} string "Internal server error"
+// @Router /classes/{id} [put]
+func (h *ClassHandler) UpdateClass(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	var class models.Class
+	if err := json.NewDecoder(r.Body).Decode(&class); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	class.ID = uint(id)
+	if err := h.service.UpdateClass(&class); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(class)
+}
+
+// @Summary Delete a class
+// @Description Delete a specific class by its ID
+// @Tags classes
+// @Param id path int true "Class ID"
+// @Success 204 "No Content"
+// @Failure 400 {string} string "Invalid ID"
+// @Failure 500 {string} string "Internal server error"
+// @Router /classes/{id} [delete]
+func (h *ClassHandler) DeleteClass(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.ParseUint(vars["id"], 10, 32)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.DeleteClass(uint(id)); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 } 
