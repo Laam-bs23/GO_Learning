@@ -1,0 +1,94 @@
+basePath: /api
+definitions:
+  models.Class:
+    properties:
+      class_name:
+        type: string
+      id:
+        type: integer
+      student_count:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample school API server.
+  title: School API
+  version: "1.0"
+paths:
+  /classes:
+    get:
+      description: Get a list of all classes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Class'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all classes
+      tags:
+      - classes
+    post:
+      consumes:
+      - application/json
+      description: Create a new class with the provided details
+      parameters:
+      - description: Class object to create
+        in: body
+        name: class
+        required: true
+        schema:
+          $ref: '#/definitions/models.Class'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Class'
+        "400":
+          description: Invalid request body
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new class
+      tags:
+      - classes
+  /classes/{id}:
+    get:
+      description: Get a specific class by its ID
+      parameters:
+      - description: Class ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Class'
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Class not found
+          schema:
+            type: string
+      summary: Get a class by ID
+      tags:
+      - classes
+swagger: "2.0"
